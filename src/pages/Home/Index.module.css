@@ -1,0 +1,20 @@
+.headings {
+  font-size: 48px;
+}
+.services {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 32px;
+  justify-content: center;
+  max-width: 1600px;
+}
+
+@media only screen and (max-width: 600px) {
+  .headings {
+    font-size: 24px;
+  }
+}
+
+.container {
+  padding: 0 8vw;
+}

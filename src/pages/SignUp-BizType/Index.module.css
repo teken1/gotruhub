@@ -1,0 +1,18 @@
+.types {
+  font-size: 24px;
+}
+.services {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 32px;
+}
+
+@media only screen and (max-width: 600px) {
+  .types {
+    font-size: 16px;
+  }
+}
+
+.container {
+  padding: 0 8vw;
+}

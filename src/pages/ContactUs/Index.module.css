@@ -1,0 +1,24 @@
+.headings {
+  font-size: 48px;
+}
+.services {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 32px;
+}
+
+@media only screen and (max-width: 600px) {
+  .headings {
+    font-size: 24px;
+  }
+  .mobileHide {
+    display: none;
+  }
+  .desktopHide {
+    display: flex;
+  }
+}
+
+.container {
+  padding: 0 8vw;
+}

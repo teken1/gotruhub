@@ -1,0 +1,1 @@
+export const getFullName=(data)=>`${data.firstName} ${data.lastName}`
