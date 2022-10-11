@@ -1,0 +1,22 @@
+.headings {
+    font-size: 48px;
+  }
+  
+  .attendanceContainer {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  @media only screen and (max-width: 600px) {
+    .headings {
+      font-size: 20px;
+    }
+    .attendanceContainer {
+      display: block;
+    }
+  }
+  
+  .container {
+    padding: 0 8vw;
+  }
+  
