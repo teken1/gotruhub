@@ -6,6 +6,7 @@ export * from "./CreateNewPassword";
 export * from "./StocksInventory";
 export * from "./Attendance";
 export * from "./CustomerProfile";
+export * from "./Logout";
 
 export * from "./ManageUsers";
 

@@ -5,6 +5,7 @@ import React from "react";
 import {
   Dashbaord,
   Signin,
+  Logout,
   ResetPassword,
   CreateNewPassword,
   AttendanceHistory,
@@ -44,6 +45,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/new-password" element={<CreateNewPassword />} />
         <Route path="dashboard" element={<Dashbaord />} />
+        <Route path="logout" element={<Logout />} />
         <Route path="stocks-inventory" element={<StocksInventory />} />
         <Route path="attendance" element={<Attendance />} />
         <Route path="product-list" element={<ProductList />} />

@@ -5,7 +5,7 @@ import {
   ManageStore,
   RegistrationTitle
 } from "../../components/Home_";
-
+import toast, { Toaster } from "react-hot-toast";
 import { LandingHeader } from "../../components/Landing";
 import { Box, Typography } from "@mui/material";
 export const SignUpBigBiz = () => {
@@ -21,7 +21,10 @@ export const SignUpBigBiz = () => {
   const [yearOfEstablishment, setYearOfEstablishment] = useState("");
   const [nameOfProprietor, setNameOfProprietor] = useState("");
   const [businessAddress, setBusinessAddress] = useState("");
+  const [personalAddress, setPersonalAddress] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
+  const notify = (message) => toast(message);
 
   const docs = [cacImage, opLicenceImage];
 
@@ -44,6 +47,42 @@ export const SignUpBigBiz = () => {
     }
   };
 
+  const myHeaders = new Headers();
+myHeaders.append("domain", 'smart');
+
+  const raw = {    
+    "personalAddress":personalAddress,
+    "email":email,
+    "organizationType":"Registered Organizations",
+    "phone":phone,
+    "name":name,
+    "businessType":businessType,
+    "businessAddress":businessAddress,
+    "yearOfEstablishment":yearOfEstablishment,
+    "nameOfProprietor":nameOfProprietor,
+  };
+
+  const handleSignUp = async () => {
+    const resp = await fetch(
+      "https://gotruhub-api.herokuapp.com/api/v1/organizations/registeration/personal",
+      {
+        method: "POST",
+        // headers: myHeaders,
+        body: raw,
+        redirect: 'follow',
+      }
+    );
+    const data = await resp.json();
+    if (data.error) {
+      notify(data.error.message);
+      return;
+    }
+    const myData = JSON.stringify(data);
+    console.log(data);
+    return myData;
+
+  }
+
   return (
     <main
       style={{
@@ -52,6 +91,16 @@ export const SignUpBigBiz = () => {
         minHeight: "100vh"
       }}
     >
+    <Toaster
+      toastOptions={{
+        className: "",
+        style: {
+          border: "1px solid rgba(145, 64, 64, 1)",
+          padding: "16px",
+          color: "rgba(145, 64, 64, 1)"
+        }
+      }}
+    />
       <LandingHeader />
       <div
         className="center"
@@ -69,6 +118,8 @@ export const SignUpBigBiz = () => {
                 }}
                 labelStyle={{ fontSize: 12, color: "#19201D" }}
                 title="Name of Establishment"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
               <Input
                 containerStyle={{ flex: 1 }}
@@ -78,6 +129,8 @@ export const SignUpBigBiz = () => {
                   border: "1px solid #D5D7E4"
                 }}
                 labelStyle={{ fontSize: 12, color: "#19201D" }}
+                value={businessType}
+                onChange={(e) => setBusinessType(e.target.value)}
               />
               </FlexRow>
               <FlexRow>
@@ -121,6 +174,8 @@ export const SignUpBigBiz = () => {
                 }}
                 labelStyle={{ fontSize: 12, color: "#19201D" }}
                 title="Phone number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
               <Input
                 containerStyle={{ flex: 1 }}
@@ -130,16 +185,31 @@ export const SignUpBigBiz = () => {
                   border: "1px solid #D5D7E4"
                 }}
                 labelStyle={{ fontSize: 12, color: "#19201D" }}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </FlexRow>
             <Input
               containerStyle={{ flex: 1 }}
-              title="Address"
+              title="Business Address"
               style={{
                 backgroundColor: "transparent",
                 border: "1px solid #D5D7E4"
               }}
               labelStyle={{ fontSize: 12, color: "#19201D" }}
+              value={businessAddress}
+                onChange={(e) => setBusinessAddress(e.target.value)}
+            />
+            <Input
+              containerStyle={{ flex: 1 }}
+              title="Personal Address"
+              style={{
+                backgroundColor: "transparent",
+                border: "1px solid #D5D7E4"
+              }}
+              labelStyle={{ fontSize: 12, color: "#19201D" }}
+              value={personalAddress}
+                onChange={(e) => setPersonalAddress(e.target.value)}
             />
             <FlexRow>
               <Input
@@ -150,6 +220,8 @@ export const SignUpBigBiz = () => {
                 }}
                 labelStyle={{ fontSize: 12, color: "#19201D" }}
                 title="Year of Establishment"
+                value={yearOfEstablishment}
+                onChange={(e) => setYearOfEstablishment(e.target.value)}
               />
               <Input
                 containerStyle={{ flex: 1 }}
@@ -159,11 +231,13 @@ export const SignUpBigBiz = () => {
                   border: "1px solid #D5D7E4"
                 }}
                 labelStyle={{ fontSize: 12, color: "#19201D" }}
+                value={nameOfProprietor}
+                onChange={(e) => setNameOfProprietor(e.target.value)}
               />
             </FlexRow>
 
             <FlexRow className="flex" style={{ columnGap: "2vw" }}>
-              {[
+              {/* {[
                 {
                   title: "Certificate of Incorporation with CAC Number",
 
@@ -222,7 +296,100 @@ export const SignUpBigBiz = () => {
                     )}
                   </div>
                 </div>
-              ))}
+              ))} */}
+              { registrationType === "CAC" &&
+              <div
+                onClick={() => {
+                  if (!cacImage) uploadCac();
+                }}
+                style={{
+                  border: "1px dashed #D5D7E4",
+                  backgroundColor: "#fff",
+                  borderRadius: 4,
+                  marginBottom: 24,
+                  flex: 1,
+                  height: 100
+                }}
+                className={"hover center " + (!cacImage && "pointer")}
+              >
+                <div className="center" style={{ position: "relative" }}>
+                  <h3
+                    style={{
+                      marginBottom: 8,
+                      color: "rgba(111, 121, 117, 1)",
+
+                      width: 170
+                    }}
+                    className="f12"
+                  >
+                    {cacImage ? cacImage?.name : "Certificate of Incorporation with CAC Number" + " (pdf only)"}
+                  </h3>
+                  <div style={{ position: "absolute", left: -50 }}>
+                    {cacImage ? (
+                      <img src="/images/pdf-file .svg" />
+                    ) : (
+                      <img src="/images/upload.svg" />
+                    )}
+                  </div>
+                  {cacImage && (
+                    <div
+                      onClick={() => setCacImage(null)}
+                      style={{ position: "absolute", right: -50 }}
+                      className="pointer"
+                    >
+                      <img src="/images/Delete.svg" />
+                    </div>
+                  )}
+                </div>
+              </div>
+              }
+              { registrationType !== "" &&
+                registrationType !== "Select Registration Type" &&
+              <div
+                onClick={() => {
+                  if (!opLicenceImage) uploadOpLicence();
+                }}
+                style={{
+                  border: "1px dashed #D5D7E4",
+                  backgroundColor: "#fff",
+                  borderRadius: 4,
+                  marginBottom: 24,
+                  flex: 1,
+                  height: 100
+                }}
+                className={"hover center " + (!opLicenceImage && "pointer")}
+              >
+                <div className="center" style={{ position: "relative" }}>
+                  <h3
+                    style={{
+                      marginBottom: 8,
+                      color: "rgba(111, 121, 117, 1)",
+
+                      width: 170
+                    }}
+                    className="f12"
+                  >
+                    {opLicenceImage ? opLicenceImage?.name : "Operational License / Permit" + " (pdf only)"}
+                  </h3>
+                  <div style={{ position: "absolute", left: -50 }}>
+                    {opLicenceImage ? (
+                      <img src="/images/pdf-file .svg" />
+                    ) : (
+                      <img src="/images/upload.svg" />
+                    )}
+                  </div>
+                  {opLicenceImage && (
+                    <div
+                      onClick={() => setOpLicenceImage(null)}
+                      style={{ position: "absolute", right: -50 }}
+                      className="pointer"
+                    >
+                      <img src="/images/Delete.svg" />
+                    </div>
+                  )}
+                </div>
+              </div>
+              }
             </FlexRow>
             {/* refs */}
             <input
@@ -248,6 +415,7 @@ export const SignUpBigBiz = () => {
                 backgroundColor: "#19201D",
                 marginTop: 48
               }}
+              onClick={handleSignUp}
             />
           </div>
         </div>

@@ -2583,13 +2583,23 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: #ffff;
   overflow-x: auto;
 }
+
+.deskgridOne td, .deskgridOne th {
+  padding:15px 23px;
+}
 .cart {
   background-color: #ffff;
   overflow-x: auto;
+  width: 33%;
 }
 
 .cartTable {
   width: 100%;
+}
+
+.cartTable td, .cartTable th {
+  /* white-space: normal; */
+  padding:10px 10px;
 }
 
 .deskModeSort {
