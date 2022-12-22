@@ -1,9 +1,62 @@
-import { React, useState } from "react";
-import { ProductRow } from "../ProductRow";
+import React, { useEffect, useState } from "react";
+import { ProductTableContent } from "../ProductTableContent";
+import toast, { Toaster } from "react-hot-toast";
 
-export const ProductTable = ({ isExpanded }) => {
+export const ProductTable = ({ isExpanded, searchValue }) => {
   const [count, setCount] = useState(1);
   // setCount = count + 1;
+  const [productsData, setProductsData] = useState([]);
+
+  const notify = (message) => toast(message);
+
+  const token = localStorage.getItem("token");
+  const domagent = localStorage.getItem("agent");
+  const domain = domagent.domain;
+  const myHeaders = new Headers();
+    myHeaders.append("domain", domain);
+    myHeaders.append("AUTHORIZATION", "Bearer "+token);
+
+    const getProductList = async () => {
+    
+      const resp = await fetch(
+        "https://gotruhub-api.herokuapp.com/api/v1/products",
+        {
+          method: "GET",
+          headers: myHeaders,
+          redirect: 'follow',
+        }
+      );
+      const data = await resp.json();
+      if (data.error) {
+        notify(data.error.message);
+        return;
+      }
+      const myData = JSON.stringify(data?.products);
+      return myData;
+    }
+    useEffect(() => {
+      ( 
+        async function renderProducts() {
+        const lists = await getProductList();
+        const dataLists = JSON.parse(lists);
+        if (searchValue === "" || searchValue === null || searchValue === undefined) {
+          setProductsData(dataLists);
+        } else {
+          const arrayLists = dataLists.filter(searchOutput => {
+            return (searchOutput.name.includes(searchValue)
+            || searchOutput.category.includes(searchValue)
+            || searchOutput.manufacturer.includes(searchValue)
+            );
+          });
+          setProductsData(arrayLists);
+          // console.log(arrayLists);
+        }
+      }
+      )();
+    
+    }, 
+    
+    [productsData]);
   return (
     <section>
       <table>
@@ -20,12 +73,37 @@ export const ProductTable = ({ isExpanded }) => {
           <th className={!isExpanded && "hide"}>Action</th>
         </thead>
         <tbody>
-          {[2, 3, 3, 56, 54, 56, 6].map((item, idx) => (
-
-            <ProductRow sn={idx * 1 + 1} isExpanded={isExpanded} />
-
-
-          ))}
+          {productsData.length !== 0 ?
+          productsData.map((item, idx) => {
+            const product_id = item?._id;
+            const product = item?.name;
+            const category = item?.category;
+            const manufacturer = item?.manufacturer;
+            const costPrice = item?.costPrice;
+            const sellingPrice = item?.sellingPrice;
+            const availableQty = item?.availableQty;
+            const unitOfSale = item?.unitOfSale;
+            return(
+            <tr>
+            <ProductTableContent
+              sn={idx * 1 + 1} 
+              product_id={product_id}
+              product={product}
+              category={category}
+              manufacturer={manufacturer}
+              cprice={costPrice}
+              sprice={sellingPrice}
+              available={availableQty}
+              unit={unitOfSale}
+              quantity={item?.qtyPerUnit}
+              miniQty={item?.minimumQty}
+              action={"View"}
+              isExpanded={isExpanded}
+            /> 
+          </tr>
+            )
+          }):
+          <tr><td colSpan={11} align="center">No Data Found</td></tr>}
         </tbody>
       </table>
 

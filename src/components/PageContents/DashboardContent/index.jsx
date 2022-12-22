@@ -1,21 +1,32 @@
-import React, { useState } from "react";
+import React, { useState,useContext,useEffect } from "react";
 import { ProductSalesRecord, OutOfStock } from "../..";
-import { Switch } from "@mui/material";
+import CustomSwitch from "../../FormElements/CustomSwitch";
 import SplineChart from "../../Charts/Spline Chart";
-
+import { Context, AgentContext } from "../../../contexts";
+import { useNavigate } from "react-router-dom";
+import { FormControlLabel } from "@mui/material";
 export const DashboardContent = () => {
+  const {agent} = useContext(AgentContext);
+  const navigate = useNavigate();
   const [isDeskMode, setIsDeskMode] = useState(false);
+  const { navIsCollapsed, setNavIsCollaped } = useContext(Context);
+  useEffect(() => {
+    setNavIsCollaped(false);
+  }, []);
   return (
     <div>
+      { !isDeskMode ? 
+      <>
       <div
         className="flex justify-between align-center"
         style={{ marginBottom: 30, marginTop: 40 }}
       >
-        <h1 className="f32 fg-grey1 fw700"> Welcome back, Bright</h1>
+        <h1 className="f32 fg-grey1 fw700"> Welcome back, {agent.firstName}</h1>
         <div>
           <span className="fg-grey1">Desk mode</span>
-          <Switch
-            size="string"
+          <FormControlLabel
+            style={{marginLeft:0}}
+            control={<CustomSwitch sx={{ m: 1 }}  />}
             checked={isDeskMode}
             onChange={() => setIsDeskMode(!isDeskMode)}
           />
@@ -85,6 +96,10 @@ export const DashboardContent = () => {
         <ProductSalesRecord flex={0.6} />
         <OutOfStock flex={0.4} />
       </div>
+      </>
+        :
+        navigate("/desk-mode") 
+      }
     </div>
   );
 };

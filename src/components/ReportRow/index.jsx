@@ -1,17 +1,22 @@
 import React from "react";
 import { ReportData } from "../ReportData";
+import moment from "moment/moment";
 
-export const ReportRow = ({ sn }) => {
+export const ReportRow = ({ sn,amount,seller,cname,cdept,cid,orderId,orderedAt,pid,pname,pprice,pqty,punit,payType }) => {
+  const date = moment(orderedAt).format("Do, MMM YYYY");
   return (
     <tr>
       <ReportData
         sn={sn}
-        date={"12, Jun 2011"}
-        product={"Bournvita chocolate"}
-        quantity={900}
-        unit={"Sachet"}
-        uprice={"₦ 23,999.00"}
-        Tamount={"₦ 23,999.00"}
+        cid={cid}
+        date={date}
+        name={cname}
+        department={cdept}
+        product={pname}
+        quantity={pqty}
+        unit={punit}
+        uprice={pprice}
+        amount={amount}
         action={"View"}
       />
     </tr>

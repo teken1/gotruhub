@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Input, HardwareIntegration, RulesAndPermission } from "../..";
+import React, { useEffect, useState } from "react";
+import { Button, Input, HardwareIntegration, RulesAndPermission, Select } from "../..";
 import { useSearchParams } from "react-router-dom";
 
 export const SettingsContent = ({ location }) => {
@@ -12,6 +12,7 @@ export const SettingsContent = ({ location }) => {
   else if (activeTab == 1) content = <CompanyDetails />;
   else if (activeTab == 2) content = <HardwareIntegration />;
   else if (activeTab == 3) content = <RulesAndPermission />;
+
   return (
     <section>
       <nav>
@@ -49,6 +50,27 @@ export const SettingsContent = ({ location }) => {
 };
 
 const PersonalDetails = () => {
+  
+  const [agentData, setAgentData] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [dob, setDob] = useState("");
+  const [gender, setGender] = useState("");
+  
+  useEffect(() => {
+    const items = JSON.parse(localStorage.getItem("agent"));
+    setAgentData("items");
+    console.log(items.firstName);
+    setFirstName(items.firstName);
+    setLastName(items.lastName);
+    setEmail(items.email);
+    setPhone(items.phone);
+    setDob(items.dateOfBirth);
+    setGender(items.gender);
+    console.log(items);
+  },[])
   return (
     <>
       <section className="bg-white" style={{ padding: 24 }}>
@@ -70,17 +92,28 @@ const PersonalDetails = () => {
         </header>
         <section style={{ marginTop: 50, padding: 71 }}>
           <div className="flex" style={{ columnGap: 29 }}>
-            <Input placeholder="First Name" title="First Name" />
-            <Input placeholder="Last Name" title="Last Name" />
+            <Input value={firstName} title="First Name" onInput={(val) => setFirstName(val)} />
+            <Input value={lastName} title="Last Name" onInput={(val) => setLastName(val)} />
           </div>
 
           <div className="flex" style={{ columnGap: 29 }}>
-            <Input placeholder="brightbright@gmail.com" title="Email Address" />
-            <Input placeholder="090 998 9898" title="Phone number" />
+            <Input value={email} title="Email Address" onInput={(val) => setEmail(val)} />
+            <Input value={phone} title="Phone number" onInput={(val) => setPhone(val)} />
           </div>
           <div className="flex" style={{ columnGap: 29 }}>
-            <Input placeholder="Select date" title="Date of Birth" />
-            <Input placeholder="Select Gender" title="Gender" />
+            <Input value={dob} title="Date of Birth" onInput={(val) => setDob(val)} />
+            <Select
+              title="Gender"
+              placeholder="Select Gender"
+              options={[
+                { label: "Male", value: "male" },
+                { label: "Female", value: "female" }
+              ]}
+              value={gender}
+              onChange={(e) => {
+                setGender(e.target.value);
+              }}
+            />
           </div>
           <div className="flex justify-end" style={{ marginTop: 25 }}>
             <Button

@@ -20,7 +20,7 @@ export const Productflex = ({ setExpanded, isExpanded, setToggle, toggle }) => {
             toggle === "salesregister" ? "pointer hovergreen" : "sales pointer"
           }
         >
-          Sales Register
+          Sales Record
         </div>
       </div>
       <div style={{marginTop:"-22px"}}>

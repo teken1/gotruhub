@@ -4,6 +4,7 @@ import { SalesMore } from "../SalesMore";
 
 export const SalesData = ({
   sn,
+  cid,
   date,
   name,
   department,
@@ -25,13 +26,14 @@ export const SalesData = ({
       <td>{product}</td>
       <td>{quantity}</td>
       <td>{unit}</td>
-      <td>{uprice}</td>
-      <td>{amount}</td>
+      <td>{"₦" + uprice.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</td>
+      <td>{"₦" + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</td>
       <td style={{ position: "relative" }}>
         <SalesMore
           isOpen={salesMoreIsOpen}
           isSuspended={isSuspended}
           setIsSuspended={setIsSuspended}
+          cid={cid}
         />
         <button
           className="CTA"

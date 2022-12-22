@@ -1,10 +1,16 @@
-import { Grid } from "@mui/material";
-import React from "react";
+import { React, useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
+import moment from "moment/moment";
 
-export const ProfileDetail = () => (
+export const ProfileDetail = ({uDob,uDreg,uEmail,uGender
+,uIdNo,uName,uPic,uRole,uSus,suspendDate
+}) => {
+
+return (
   <section
     role="profile-details"
-    style={{
+    style={{fontSize:14,
       marginTop: 46,
       borderBottom: "1px solid rgba(218, 223, 221, 1)",
       paddingBottom: 40,
@@ -12,7 +18,7 @@ export const ProfileDetail = () => (
   >
     <h3 className="profileDetails">Profile Details</h3>
     <div
-      style={{
+      style={{fontSize:14,
         border: "1px solid rgba(213, 215, 228, 1)",
         padding: "31px 50px",
         marginTop: 32,
@@ -21,21 +27,21 @@ export const ProfileDetail = () => (
     >
       <div
         className="flex-col align-center"
-        style={{
+        style={{fontSize:14,
           paddingRight: 72,
           width: "fit-content",
           borderRight: "1px solid rgba(213, 215, 228, 1)",
         }}
       >
         <div>
-          <img src="/images/avatar.svg" />
+          <img src={uPic} width="100"  style={{borderRadius:"100px"}}/>
         </div>
 
-        <p className="f16 fg-grey1 fw700" style={{ marginBottom: 10 }}>
-          Emmanuel Joseph
+        <p className="f16 fg-grey1 fw700" style={{fontSize:14, marginBottom: 10 }}>
+          {uName}
         </p>
-        <p className="f12" style={{ backgroundColor: "#EDFFF7", padding: 3 }}>
-          emmanueljoeseph@gmail.com
+        <p className="f12" style={{fontSize:14, backgroundColor: "#EDFFF7", padding: 3, color:"#000", fontWeight:600 }}>
+          {uEmail}
         </p>
       </div>
       <section style={{ marginLeft: 72 }} className="flex-col justify-between">
@@ -48,9 +54,9 @@ export const ProfileDetail = () => (
           //   rowGap: 24,
           // }}
         >
-          <Li prty="Gender" value="Male" />
-          <Li prty="Position/Role" value="None" />
-          <Li prty="Personal ID" value="0000000000" />
+          <Li prty="Gender" value={uGender} />
+          <Li prty="Position/Role" value={uRole} />
+          <Li prty="Personal ID" value={uIdNo} />
         </ul>
 
         <ul
@@ -58,18 +64,22 @@ export const ProfileDetail = () => (
           // className="flex flex-wrap thirdLi"
           // style={{ columnGap: "7vw", rowGap: 24 }}
         >
-          <Li prty="Date of Birth" value="12, Jun 2000" />
-          <Li prty="Date Joined" value="12, Jun 2021" />
-          <Li value="This user is suspended till 12, jun 2022" />
+          <Li prty="Date of Birth" value={uDob} />
+          <Li prty="Date Joined" value={uDreg} />
+          {uSus == "suspend" ?
+          <Li value={"This user is suspended till "+suspendDate} />
+          :<Li value={"This user is active"} />
+          }
         </ul>
       </section>
     </div>
   </section>
 );
+}
 
 const Li = ({ prty, value }) => (
   <li>
-    <h4 className="f12 fg-dark2" style={{ fontWeight: "400", marginBottom: 8 }}>
+    <h4 className="f12 fg-dark2" style={{ fontWeight: "400", marginBottom: 0 }}>
       {prty}
     </h4>
     <p className="fg-dark1 fw500">{value}</p>

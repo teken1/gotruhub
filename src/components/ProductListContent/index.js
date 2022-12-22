@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ProductTable } from "../ProductTable";
 import { Productflex } from "../Productflex";
 import { ServiceList } from "../ServiceList";
 import { SalesFilter } from "..";
+import toast, { Toaster } from "react-hot-toast";
+import { RegisterUserModal } from "..";
 
 export const ProductListContent = () => {
   const [isExpanded, setExpanded] = React.useState(true);
+  const [userModalIsOpen, setUserModalIsOpen] = React.useState(false);
   const [toggle, setToggle] = React.useState("productlist");
+  const [searchValue, setSearchValue] = React.useState("");
+  const [filterValue, setFilterValue] = useState("");
+  const [filterValue2, setFilterValue2] = useState("");
   return (
     <main>
       <Productflex
@@ -19,12 +25,13 @@ export const ProductListContent = () => {
       <section className={!isExpanded && "gridproduct"}>
         {!isExpanded && (
           <section>
+            {/* <OldServiceList /> */}
             <ServiceList />
           </section>
         )}
         {toggle == "productlist" ? (
-          <section className={!isExpanded ? "productrow" : "productrow hide-x-overflow"} style={{paddingLeft:32, paddingRight:32}}>
-            <section className="productholder">
+          <section className={!isExpanded ? "productrow" : "productrow hide-x-overflow"} style={{}}>
+            <section className="productholder" style={{paddingLeft:32, paddingRight:32}}>
               <div className="searchflexholds">
                 <div className="searchflex">
                   <h3>Product List</h3>
@@ -35,6 +42,8 @@ export const ProductListContent = () => {
                       placeholder={
                         "Search for items by name, category, manufacturer, "
                       }
+                      value={searchValue}
+                      onInput={(e) => setSearchValue(e.target.value)}
                     ></input>
                   </div>
                   <div className={isExpanded ? "sort" : "hide"}>
@@ -49,11 +58,13 @@ export const ProductListContent = () => {
               </div>
             </section>
             <section className="producthead">
-              <ProductTable isExpanded={isExpanded} />
+              <ProductTable isExpanded={isExpanded} searchValue={searchValue} />
             </section>
           </section>
         ) : (
-          <SalesFilter isExpanded={isExpanded} />
+          <SalesFilter isExpanded={isExpanded} filterValue={filterValue} filterValue2={filterValue2} setFilterValue={setFilterValue}
+          setFilterValue2={setFilterValue2}
+          />
         )}
       </section>
     </main>

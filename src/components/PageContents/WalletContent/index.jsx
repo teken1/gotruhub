@@ -3,6 +3,7 @@ import { Button, Input } from "../..";
 
 export const WalletContent = () => {
   const [activeTab, setActiveTab] = useState(0);
+  console.log(localStorage.getItem('agent'))
   return (
     <section>
       <CompanyDetails />
@@ -28,7 +29,7 @@ const CompanyDetails = () => {
             className="bg-white center flex-col"
             style={{ padding: "60px 10px" }}
           >
-            <h1 className="f24 fw700 fg-grey2">Company’s Wallet</h1>
+            <h1 className="f24 fw700 fg-grey2">Company’s Virtual Wallet</h1>
             <div style={{ marginTop: 57 }}>
               <p>
                 <span className="f48 fw700 fg-grey1">0.00</span>
