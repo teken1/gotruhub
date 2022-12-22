@@ -22,7 +22,7 @@ export default function Details({}) {
     }
     
     const resp = await fetch(
-      "https://gotruhubapi.herokuapp.com/api/v1/auth/agents/login",
+      "https://gotruhub-api.herokuapp.com/api/v1/auth/agents/login",
       {
         method: "POST",
         body: JSON.stringify(body),
