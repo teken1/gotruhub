@@ -4,6 +4,7 @@ export const SuspensionModal = ({
   isOpen,
   setIsSuspended,
   isSuspended,
+  cid,
 }) => {
   const [date1, setDate1] = useState("");
   const inputDate1 = useRef(null);

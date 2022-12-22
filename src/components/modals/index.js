@@ -1,5 +1,6 @@
 export * from "./EditTimeModal";
 export * from "./SalesModal";
+export * from "./ProductsModal";
 export * from "./ReportModal";
 export * from "./CheckoutModal";
 export * from "./ProcessingModal";

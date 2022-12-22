@@ -8,6 +8,7 @@ export const DeskData = ({
   selling,
   quantity,
   action,
+  steps,
 }) => {
   return (
     <>
@@ -17,7 +18,9 @@ export const DeskData = ({
       <td>{available}</td>
       <td>{selling}</td>
       <td>
-        <div className="deskborder">{quantity}</div>
+        <div className="deskborder">
+          <input type="number" value={quantity} step={steps}/>
+        </div>
       </td>
       <td>
         <div className="greenadd">

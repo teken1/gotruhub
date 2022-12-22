@@ -15,9 +15,9 @@ export const TableNav = ({ classes }) => {
   return (
     <section className={"page-nav " + classes}>
       <div className="backfront">
-        <img src="./images/back.svg" onClick={() => handleCount(-1)}></img>
+        <img src="/images/back.svg" onClick={() => handleCount(-1)}></img>
         <p>{count}</p>
-        <img src="./images/front.svg" onClick={() => handleCount(1)}></img>
+        <img src="/images/front.svg" onClick={() => handleCount(1)}></img>
       </div>
     </section>
   );

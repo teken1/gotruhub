@@ -1,6 +1,6 @@
 import React from "react";
 
-export const CheckoutModal = ({ closeModal, isOpen }) => (
+export const CheckoutModal = ({ closeModal, isOpen, amountToPay }) => (
   <div
     style={{
       position: "fixed",
@@ -33,7 +33,7 @@ export const CheckoutModal = ({ closeModal, isOpen }) => (
         <div className="checkedamount">
           <h4>Total Amount</h4>
           <h3>
-            1,200,990.00<span className="ngnSpan">NGN</span>
+          {amountToPay}<span className="ngnSpan">NGN</span>
           </h3>
         </div>
 

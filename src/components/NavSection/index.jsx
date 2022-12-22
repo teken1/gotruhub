@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { Context } from "../../contexts";
+import { AgentContext } from "../../contexts";
 import styles from "./styles.css";
 
 export const NavSection = ({ title, routes = [] }) => {

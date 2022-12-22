@@ -1,13 +1,27 @@
-import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useState, useEffect } from "react";
+import { Link,useNavigate } from "react-router-dom";
+import { RegistrationStatusModal } from "../modals";
 import { NavSection, RegisterUserModal } from "..";
-import { Context } from "../../contexts";
-
+import { Context, AgentContext } from "../../contexts";
 export const MainNav = ({ setNotificationIsOpen }) => {
+  const { agent, setAgent } = useContext(AgentContext);
   const [userModalIsOpen, setUserModalIsOpen] = React.useState(false);
   const { navIsCollapsed, setNavIsCollaped } = useContext(Context);
-  console.log(navIsCollapsed);
-  const handleCollapseNav = () => {};
+  const navigate= useNavigate();
+
+  const handleCollapseNav = () => {
+      setNavIsCollaped(!navIsCollapsed);
+  };
+  
+useEffect(() => {
+  const items = JSON.parse(localStorage.getItem('agent'));
+  if ((items) && (agent.toString.length === 0)) {
+    setAgent(items);
+    console.log(items);
+  } else {
+    navigate("/sign-in");
+  }
+}, []);
   return (
     <>
       {/* {userModalIsOpen && <RegisterUserModal closeModal={setUserModalIsOpen} />} */}
@@ -29,16 +43,19 @@ export const MainNav = ({ setNotificationIsOpen }) => {
             className="justify-between flex align-center"
           >
             {navIsCollapsed ? (
-              <img src="/images/logo-only.svg" />
+              <img style={{margin:"auto"}} src="/images/logo-only.svg" />
             ) : (
               <img src="/images/logo-white.svg" />
             )}
-
+            { (window.location.pathname === "/desk-mode") ? (
+              <></>
+            ):(
             <img
               src="/images/harm-burger.svg"
               className="hover pointer"
-              onClick={() => setNavIsCollaped(!navIsCollapsed)}
+              onClick={handleCollapseNav}
             />
+            )}
           </div>
           <div className="flex" style={{ marginBottom: 48 }}>
             <button
@@ -138,7 +155,9 @@ export const MainNav = ({ setNotificationIsOpen }) => {
                       className="fg-dark7 font-std"
                       style={{ whiteSpace: "nowrap" }}
                     >
-                      Brightmac<br/><span style={{color:"#6F7975", fontSize:"12px", fontWeight:450 }}>Admin</span>
+                      {agent.firstName + " " + agent.lastName}<br/><span style={{color:"#6F7975", fontSize:"12px", fontWeight:450,textTransform:"uppercase" }}>
+                        {agent.role}
+                      </span>
                     </p>
                 </Link>
                     )}
@@ -160,7 +179,9 @@ export const MainNav = ({ setNotificationIsOpen }) => {
                       className="fg-dark7 font-std"
                       style={{ whiteSpace: "nowrap", textAlign: "center" }}
                     >
-                      Brightmac<br/><span style={{color:"#6F7975", fontSize:"12px", fontWeight:450 }}>Admin</span>
+                      {agent.firstName + " " + agent.lastName}<br/><span style={{color:"#6F7975", fontSize:"12px", fontWeight:450,textTransform:"uppercase" }}>
+                        {agent.role}
+                        </span>
                     </p>
                 </Link>
                     )}

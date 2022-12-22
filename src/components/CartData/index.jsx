@@ -9,7 +9,7 @@ export const CartData = ({ product, quantity, selling, action }) => {
       </td>
       <td>{selling}</td>
       <td>
-        <div className="cartActions">
+        <div style={{cursor:"pointer"}} className="cartActions">
           <img src="./images/bad.svg" />
         </div>
       </td>

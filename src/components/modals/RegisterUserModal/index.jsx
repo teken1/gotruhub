@@ -1,6 +1,12 @@
-import React, { useState, useRef } from "react";
-import { Input, FlexRow } from "../..";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { RegistrationStatusModal } from "../RegistrationStatusModal";
+import { Input, FlexRow, Select } from "../..";
 import toast, { Toaster } from "react-hot-toast";
+import { AgentContext } from "../../../contexts";
+import axios from "axios";
+import { render } from "@testing-library/react";
+import QRCode from "react-qr-code";
 export const RegisterUserModal = ({ closeModal, isOpen }) => {
   const [hideCalender, setHideCalender] = useState(false);
   const calenderRef = useRef();
@@ -10,30 +16,91 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [gender, setGender] = useState("");
+  const [department, setDepartment] = useState("");
+  const [level, setLevel] = useState("");
   const [date, setDate] = useState("");
-  const [passport, setPassport] = useState("");
+  const [photo, setPhoto] = useState("");
   const [signature, setSignature] = useState("");
+  const [qrValue, setQrValue] = useState("");
+  const [managerPhone1, setManagerPhone1]= useState("");
+  const [managerPhone2, setManagerPhone2]= useState("");
+  const [domain, setDomain] = useState("");
+  const [agentEmail, setAgentEmail] = useState("");
+  const [photoLink, setPhotoLink] = useState("");
+  const [signLink, setSignLink] = useState("");
+  const [passSrc, setPassSrc] = useState("");
+  const [signSrc, setSignSrc] = useState("");
+  const [cloudDatas, setCloudDatas] = useState("");
+  const [QrUrl, setQrUrl] = useState("");
+  const [regId, setRegId] = useState("");
+
+  const navigate= useNavigate();
   
-  const docs = [passport, signature];
+  const url = "https://api.cloudinary.com/v1_1/gotruhub/image/upload";
+  const docs = [photo, signature, QrUrl];
+  const formData = new FormData();
 
   const passportRef = useRef();
   const signatureRef = useRef();
 
-  const uploadSignature = () => {
+  const uploadPassport = () => {
     passportRef?.current?.click();
   };
-  const uploadPassport = () => {
+  const uploadSignature = () => {
     signatureRef?.current?.click();
   };
   const handleImageChange = (image, kind) => {
-    if (image[0]) {
-      if (kind == "pas") {
-        setPassport(image[0]);
-      } else {
-        setSignature(image[0]);
-      }
-    }
+        setPhoto(image[0]);
+        const preview0 = document.getElementById("imgVal0");
+        const file = image[0];
+        const reader = new FileReader();
+
+        reader.addEventListener("load", () => {
+          // convert image file to base64 string
+          setPassSrc(reader.result);
+          preview0.src = reader.result;
+        }, false);
+
+        if (file) {
+          reader.readAsDataURL(file);
+        }
   };
+  const handleSignChange = (image, kind) => {
+        setSignature(image[0]);
+        const preview1 = document.getElementById("imgVal1");
+        const file = image[0];
+        const reader = new FileReader();
+
+        reader.addEventListener("load", () => {
+          // convert image file to base64 string
+          setSignSrc(reader.result);
+          preview1.src = reader.result;
+        }, false);
+
+        if (file) {
+          reader.readAsDataURL(file);
+        }
+  };
+
+  const handleQrUrl =  () => {
+    
+      const svg = document.querySelector("#qrcode").innerHTML;
+      const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+      const doURL = window.URL || window.webkitURL || window;
+      const svgurl = URL.createObjectURL(blob);
+      const image = document.querySelector("#qrImg");
+      image.src = svgurl;
+      console.log(blob);
+      console.log(svgurl);
+      const myFile = new File([blob], 'qrcode.jpeg', {
+        type: blob.type,
+    });
+    
+    console.log(myFile);
+      setQrUrl(myFile);
+    
+    
+  }
 
   const user = {
     firstName,
@@ -43,14 +110,18 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
     email,
     gender,
     dateOfBirth: date,
-    passport,
-    signature,
+    managerPhone1,
+    managerPhone2,
+    department,
+    level
   };
 
-  console.log(user);
+  
+  // console.log(user);
   const notify = (message) => toast(message);
 
   async function register() {
+    
     if (
       !firstName ||
       !lastName ||
@@ -59,27 +130,77 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
       !email ||
       !gender ||
       !date ||
-      !passport ||
-      !signature 
+      !photo ||
+      !managerPhone1 ||
+      !managerPhone2 ||
+      !signature  ||
+      !level ||
+      !department
     ) {
       notify("All Fields Are Required");
-    }
-
-    const response = await fetch(
-      "https://gotruhub-api.herokuapp.com/api/v1/auth/members",
-      {
-        method: "POST",
-        body: JSON.stringify(user),
-        headers: { "Content-type": "application/json" },
-      }
-    );
-
-    const data = await response.json();
-    if (data.error) {
-      notify(data.error.message);
       return;
-    }
+    }  
+    const token = localStorage.getItem("token");
+    const myHeaders = new Headers();
+    myHeaders.append("AUTHORIZATION", "Bearer "+token);
+   
+    const myRes = await axios.post("https://gotruhubapi.herokuapp.com/api/v1/auth/members", user, {headers: {"domain":domain}
+  }).then(res => {
+    console.log(res?.data?.user?._id);
+    const myId = res?.data?.user?._id;
+    return myId;
+  })
+  .catch(err => {
+    notify(`${err?.response?.data?.error?.message}`);
+    return;
+  });
+  if(myRes === undefined || myRes === "" || myRes === null) {
+    return;
+  } else {
+    
+    let dat = "";
+    let cloudDat = "";
 
+    for (let i = 0; i < docs.length; i++) {
+      let file = docs[i];
+      formData.append("file", file);
+      formData.append("upload_preset", "zfwwazfb");
+  
+      const theValues = fetch(url, {
+        method: "POST",
+        body: formData
+      })
+        .then((response) => {
+          return response.text();
+        })
+        .then((cloudData) => {
+          cloudDat = JSON.parse(cloudData).secure_url + ",";
+          return cloudDat;
+        });
+        dat += await theValues;
+      }
+      const datValues = dat.split(",");
+      const a = datValues;
+      const avatar = a[0];
+      const qrcode = a[2];
+      const signature = a[1]; 
+      const IdNo = myRes;
+      console.log(IdNo);
+      console.log(a);
+      const raw = {
+        "avatar":avatar,
+        "qrcode":qrcode,
+        "signature":signature,
+    
+      }
+        
+      await axios.patch("https://gotruhubapi.herokuapp.com/api/v1/users/images/"+IdNo, raw).then(resd => {
+        console.log(resd);
+      })
+      .catch(err => {
+        console.log(`${err}`);
+        return;
+      });
     setEmail("");
     setFirstName("");
     setLastName("");
@@ -87,17 +208,24 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
     setDate("");
     setGender("");
     setPhone("");
-    setPassport("");
-    setSignature("");
+    setPhoto(null);
+    setSignature(null);
+    setManagerPhone1("")
+    setManagerPhone2("");
+    setLevel("");
+    setDepartment("");
 
-    closeModal(false);
-    // notify("Registration Successful");
-
-    console.log(data);
+    // closeModal(false);
+    toast.success("Registration successful!");
   }
+}
 
-  console.log(calenderRef);
-
+useEffect(() => {
+  const items = JSON.parse(localStorage.getItem('agent'));
+  setAgentEmail(items.email);
+  setDomain(items.domain);
+},
+[]);
   return (
     <div
       style={{
@@ -158,16 +286,20 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
             title="ID Number"
             placeholder="Enter ID Number"
             value={idNumber}
-            onChange={(e) => {
+            onChange={async (e) => {
               setIdNumber(e.target.value);
+              await setQrValue("https://gotruhub.com/?d="+domain+"&idNo="+idNumber + "&em" + email);
+              await handleQrUrl();
             }}
           />
           <Input
             title="Email address"
-            placeholder=" Enter Email address"
+            placeholder="Enter Email address"
             value={email}
-            onChange={(e) => {
+            onChange={async (e) => {
               setEmail(e.target.value);
+              await setQrValue("https://gotruhub.com/?d="+domain+"&idNo="+idNumber + "&em" + email);
+              await handleQrUrl();
             }}
           />
           <Input
@@ -179,9 +311,13 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
             }}
           />
           <div className="gender">
-            <Input
+            <Select
               title="Gender"
               placeholder="Select Gender"
+              options={[
+                { label: "Male", value: "male" },
+                { label: "Female", value: "female" }
+              ]}
               value={gender}
               onChange={(e) => {
                 setGender(e.target.value);
@@ -196,8 +332,6 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
                   calenderRef.current?.click();
                 }}
               >
-                {/* <input type="date" placeholder="Select Date" /> */}
-
                 <input
                   type="date"
                   placeholder="Select Date"
@@ -208,8 +342,6 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
                     setDate(e.target.value);
                   }}
                 />
-
-                <img src="./images/calendar.svg" />
               </div>
             </div>
           </div>
@@ -218,13 +350,15 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
                   title: "Passport",
 
                   action: uploadPassport,
-                  delete: () => setPassport(null)
+                  delete: () => setPhoto(null),
+                  src: passSrc
                 },
                 {
                   title: "Signature",
 
                   action: uploadSignature,
-                  delete: () => setSignature(null)
+                  delete: () => setSignature(null),
+                  src: signSrc
                 }
               ].map((type, idx) => (
                 <div
@@ -256,7 +390,7 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
                     </h3>
                     <div style={{ position: "absolute", left: -50 }}>
                       {docs[idx] ? (
-                        <img src="/images/pdf-file .svg" />
+                        <img src={type.src} width="40" style={{borderRadius:100}} />
                       ) : (
                         <img src="/images/upload.svg" />
                       )}
@@ -264,7 +398,7 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
                     {docs[idx] && (
                       <div
                         onClick={type.delete}
-                        style={{ position: "absolute", right: -50 }}
+                        // style={{ position: "absolute", right: -50 }}
                         className="pointer"
                       >
                         <img src="/images/Delete.svg" />
@@ -278,6 +412,7 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
               accept=".jpg,.jpeg,.png"
               type="file"
               ref={passportRef}
+              className="passUpload"
               onChange={(e) => handleImageChange(e.target.files, "pas")}
               style={{ display: "none" }}
             />
@@ -285,9 +420,53 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
               accept=".jpg,.jpeg,.png"
               type="file"
               ref={signatureRef}
-              onChange={(e) => handleImageChange(e.target.files, "sig")}
+              className="signUpload"
+              onChange={(e) => handleSignChange(e.target.files, "sig")}
               style={{ display: "none" }}
             />
+            <input type="hidden" className="imgValues" value={cloudDatas}
+            />
+            
+          <Input
+            title="Class / Department"
+            placeholder="Enter Class / Department"
+            value={department}
+            onChange={(e) => {
+              setDepartment(e.target.value);
+            }}
+          />
+          <Input
+            title="Level"
+            placeholder="Enter Level"
+            value={level}
+            onChange={(e) => {
+              setLevel(e.target.value);
+            }}
+          />
+        </div>
+        <div className="gridfive" style={{ columnGap: 55, marginTop:0, display:"block" }}>
+          <div
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: 4,
+              marginBottom: 24,
+              flex: 1,
+            }}
+            className="hover center pointer"
+          >
+            <div className="center" style={{ position: "relative" }}>  
+              <div id="qrcode" style={{ background: 'white', padding: '16px',display:"none" }}>
+                  <QRCode 
+                    size={150}
+                    style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                    value={qrValue}
+                    viewBox={`0 0 150 150`}
+                   />
+
+              </div>
+              <img src="" id="qrImg" />
+            </div>
+          </div>
         </div>
         <div className="managemodal">
           <div className="mana">
@@ -298,24 +477,24 @@ export const RegisterUserModal = ({ closeModal, isOpen }) => {
           <Input
             title="Phone number 1"
             placeholder="Enter phone number"
-            value={firstName}
+            value={managerPhone1}
             onChange={(e) => {
-              setFirstName(e.target.value);
+              setManagerPhone1(e.target.value);
             }}
           />
           <Input
             title="Phone number 2"
             placeholder="Enter phone number"
-            value={lastName}
+            value={managerPhone2}
             onChange={(e) => {
-              setLastName(e.target.value);
+              setManagerPhone2(e.target.value);
             }}
           />
         </div>
 
         <section className="cancelbuttons">
           <div className="canceluser">
-            <button>Cancel</button>
+            <button onClick={() => closeModal(false)}>Cancel</button>
             <button onClick={register}>Register User</button>
           </div>
         </section>
