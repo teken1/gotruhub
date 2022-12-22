@@ -31,7 +31,7 @@ export const UsersTable = () => {
   const getUserList = async () => {
     
     const resp = await fetch(
-      "https://gotruhub-api.herokuapp.com/api/v1/users", requestOptions);
+      "https://gotruhubapi.herokuapp.com/api/v1/users", requestOptions);
     const data = await resp.json();
     if (data.error) {
       notify(data.error.message);
